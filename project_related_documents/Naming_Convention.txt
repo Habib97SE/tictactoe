@@ -1,0 +1,2 @@
+Naming convention:
+1. Screen starts with uppercase and each word separates with underline (_).

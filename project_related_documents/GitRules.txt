@@ -1,0 +1,3 @@
+We should work actively in our own branch (My branch is habib and your branch is jaslyn).
+When we are done by developing we can commit and push it to the next stage in git flow which is test branch.
+In test branch we test if everything wokrs fine and then if everything is fine then we push it to the main branch which is equal to production.
