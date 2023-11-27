@@ -13,9 +13,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material3.Text
+import androidx.navigation.NavController
 
 @Composable
-fun AboutScreen() {
+fun AboutScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()

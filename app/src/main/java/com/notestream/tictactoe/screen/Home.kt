@@ -7,21 +7,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import org.w3c.dom.Text
 
 
 /**
@@ -37,39 +31,42 @@ import org.w3c.dom.Text
  * on footer: network connection status and other necessary but not important info
  */
 @Composable
-fun HomeScreen() {
+fun HomeScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Yellow)
     ) {
-        Header()
+        Header(navController)
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .weight(1f) // This makes the column take up only the necessary space
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            AddNewMenuItem(text = "Play")
-            AddNewMenuItem(text = "Settings")
-            AddNewMenuItem(text = "How to play?!")
-            AddNewMenuItem(text = "About us")
-            AddNewMenuItem(text = "Exit")
+            AddNewMenuItem(text = "Play", route = Screen.MatchMakingScreen.route, navController)
+            AddNewMenuItem(text = "Settings", route = Screen.SettingsScreen.route, navController)
+            AddNewMenuItem(text = "How to play?!", route = Screen.HelpScreen.route, navController)
+            AddNewMenuItem(text = "About us", route = Screen.AboutScreen.route, navController)
+            AddNewMenuItem(text = "Exit", route = "Exit", navController)
         }
+        Footer()
     }
 }
 
 
 @Composable
-fun AddNewMenuItem(text: String) {
+fun AddNewMenuItem(text: String, route: String, navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp),
         horizontalArrangement = Arrangement.Center
     ) {
-        OutlinedButton(onClick = { /*TODO*/ }) {
+        OutlinedButton(onClick = {
+            navController.navigate(route)
+        }) {
             Text(text = text, color = Color.Black, fontSize = 15.sp)
         }
     }

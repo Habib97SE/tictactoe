@@ -17,10 +17,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import okhttp3.internal.http2.Header
 
 @Composable
-fun Header() {
+fun Header(navController: NavController) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -28,16 +29,16 @@ fun Header() {
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // Use weight modifier for the title to take up the available space
         Text(
             text = "TicTacToe JU",
             modifier = Modifier.weight(1f),
             textAlign = TextAlign.Center,
             color = Color.White
         )
-
         // https://developer.android.com/reference/kotlin/androidx/compose/material/package-summary#IconButton(kotlin.Function0,androidx.compose.ui.Modifier,kotlin.Boolean,androidx.compose.foundation.interaction.MutableInteractionSource,kotlin.Function0)
-        IconButton(onClick = { /* doSomething() */ }) {
+        IconButton(onClick = {
+            navController.navigate(Screen.ProfileScreen.route)
+        }) {
             Icon(
                 Icons.Filled.AccountCircle, contentDescription = "Profile",
                 tint = Color.White   //https://code.luasoftware.com/tutorials/android/jetpack-compose-icon-tint-color

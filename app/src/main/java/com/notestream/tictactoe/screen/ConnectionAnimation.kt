@@ -1,55 +1,63 @@
 package com.notestream.tictactoe.screen
 
-import android.graphics.Color
-import android.graphics.ColorFilter
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
+import android.content.Context
+import android.net.ConnectivityManager
+import android.net.Network
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
+import io.ktor.http.CacheControl
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.Flow
 
 
-// https://www.youtube.com/watch?v=7GKMgXwJ4U0&ab_channel=Gerrix
-// Handle the internet connection status (if on, show the public icon, otherwise public-off).
-@Composable
-fun ConnectionAnimation() {
-    val infiniteTransition = rememberInfiniteTransition()
+fun Context.observeConnectivityAsFlow(): Flow<Boolean> {
+    val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-    val angle by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            tween(2000, easing = LinearEasing),
-            RepeatMode.Reverse
-        ), label = ""
-    )
+    return callbackFlow {
+        val callback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                trySend(true)
+            }
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
+            override fun onLost(network: Network) {
+                trySend(false)
+            }
+        }
 
-        Image(
-            imageVector = Icons.Default.contentDescription = "",
-            colorFilter = ColorFilter.tint(Color.Red),
-            modifier = Modifier
-                .size(350.dp)
-                .rotate(angle)
-        )
+        connectivityManager.registerDefaultNetworkCallback(callback)
+
+        awaitClose { connectivityManager.unregisterNetworkCallback(callback) }
     }
 }
+
+@Composable
+fun ConnectivityAwareIcon(context: Context) {
+    // State to track network availability
+    val isConnected = remember { mutableStateOf(true) }
+
+    // Observe connectivity changes
+    LaunchedEffect(key1 = Unit) {
+        context.observeConnectivityAsFlow().collect { status ->
+            isConnected.value = status
+        }
+    }
+
+    // Decide which icon to display
+    val icon = if (isConnected.value) Icons.Default.Add else Icons.Default.Favorite
+
+
+    Icon(
+        imageVector = icon,
+        contentDescription = "Connectivity Icon",
+        tint = Color.White
+    )
+}
+
