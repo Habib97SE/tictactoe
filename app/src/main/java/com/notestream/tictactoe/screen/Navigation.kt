@@ -30,7 +30,7 @@ fun Navigation() {
                 AboutScreen(navController)
             }
             composable(Screen.ErrorScreen.route) {
-                ErrorScreen(navController)
+                ErrorScreen(navController, "There has been some error!")
             }
             composable(Screen.GameScreen.route) {
                 GameScreen(navController)

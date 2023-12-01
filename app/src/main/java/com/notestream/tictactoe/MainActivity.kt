@@ -12,6 +12,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.notestream.tictactoe.screen.AboutScreen
 import com.notestream.tictactoe.screen.HomeScreen
+import com.notestream.tictactoe.screen.LoadingAnimation
+import com.notestream.tictactoe.screen.LoadingScreen
 import com.notestream.tictactoe.screen.Navigation
 import com.notestream.tictactoe.ui.theme.TictactoeTheme
 
@@ -25,7 +27,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Navigation()
+
                 }
             }
         }
