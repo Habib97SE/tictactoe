@@ -5,11 +5,12 @@ sealed class Screen(val route: String) {
     object SettingsScreen : Screen("settings")
     object ProfileScreen : Screen("profile")
     object GameScreen : Screen("game")
-    object MatchMakingScreen : Screen("match_making")
+    object GameLobbyScreen : Screen("game_lobby")
     object GameSummaryScreen : Screen("game_summary")
     object HowToPlayScreen : Screen("help")
     object AboutScreen : Screen("about")
     object ErrorScreen : Screen("error")
     object LoadingScreen : Screen("loading")
+    object InvitationScreen : Screen("invitations")
 
 }

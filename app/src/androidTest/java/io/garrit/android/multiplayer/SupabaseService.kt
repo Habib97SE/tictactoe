@@ -128,6 +128,11 @@ object SupabaseService {
         private set
     var callbackHandler: SupabaseCallback? = null
 
+    /*
+    You can call this function to join the lobby.
+    The server state will change accordingly.
+    You need to provide a valid player object as a parameter.
+     */
     suspend fun joinLobby(player: Player) {
         serverState.value = ServerState.LOADING_LOBBY
         if (_client.realtime.status.value == Realtime.Status.DISCONNECTED) {

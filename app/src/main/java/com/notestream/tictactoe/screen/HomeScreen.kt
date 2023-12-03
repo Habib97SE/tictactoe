@@ -93,8 +93,7 @@ fun HomeScreen(navController: NavController) {
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        // navController.navigate(route = Screen.MatchMakingScreen.route)
-                        navController.navigate(route = Screen.GameScreen.route)
+                        navController.navigate(route = Screen.GameLobbyScreen.route)
                     },
                     shape = CircleShape,
                     contentPadding = PaddingValues(10.dp)
