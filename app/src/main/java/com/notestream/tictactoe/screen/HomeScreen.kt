@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
@@ -80,20 +82,21 @@ fun HomeScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            Greeting(name = "Player")
             Column(
                 modifier = Modifier
                     .weight(1f) // This makes the column take up only the necessary space
                     .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // Play button
-                TextButton(
+                OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
-                        navController.navigate(route = Screen.MatchMakingScreen.route)
+                        // navController.navigate(route = Screen.MatchMakingScreen.route)
+                        navController.navigate(route = Screen.GameScreen.route)
                     },
-                    shape = RectangleShape,
+                    shape = CircleShape,
                     contentPadding = PaddingValues(10.dp)
                 ) {
                     Text(
@@ -108,13 +111,14 @@ fun HomeScreen(navController: NavController) {
                     )
                 }
 
+                Spacer(modifier = Modifier.height(16.dp))
                 // Settings button
-                TextButton(
+                OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         navController.navigate(route = Screen.SettingsScreen.route)
                     },
-                    shape = RectangleShape,
+                    shape = CircleShape,
                     contentPadding = PaddingValues(10.dp)
                 ) {
                     Text(
@@ -129,13 +133,14 @@ fun HomeScreen(navController: NavController) {
                     )
                 }
 
+                Spacer(modifier = Modifier.height(16.dp))
                 // HowToPlay button
-                TextButton(
+                OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),
                     onClick = {
                         navController.navigate(route = Screen.HowToPlayScreen.route)
                     },
-                    shape = RectangleShape,
+                    shape = CircleShape,
                     contentPadding = PaddingValues(10.dp)
                 ) {
                     Text(
@@ -149,52 +154,18 @@ fun HomeScreen(navController: NavController) {
                         textAlign = TextAlign.Center
                     )
                 }
-                /*
-                AddNewMenuItem(
-                    text = "Play",
-                    route = "Screen.MatchMakingScreen.route",
-                    navController = navController
-                )
-                AddNewMenuItem(
-                    text = "Settings",
-                    route = "Screen.SettingsScreen.route",
-                    navController = navController
-                )
-                AddNewMenuItem(
-                    text = "How to play?",
-                    route = "Screen.HowToPlayScreen.route",
-                    navController = navController
-                )
-                AddNewMenuItem(
-                    text = "About us",
-                    route = "Screen.AboutScreen.route",
-                    navController = navController
-                )
-                 */
             }
         }
     }
 }
 
+
 @Composable
-fun AddNewMenuItem (text: String, route: String, navController: NavController) {
-    TextButton(
-        modifier = Modifier.fillMaxWidth(),
-        onClick = {
-            navController.navigate(route = route)
-        },
-        shape = RectangleShape,
-        contentPadding = PaddingValues(10.dp)
-    ) {
-        Text(
-            text = text,
-            modifier = Modifier
-                .padding(start = 10.dp, end = 10.dp)
-                .fillMaxWidth(),
-            color = Color.DarkGray,
-            fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
-            textAlign = TextAlign.Center
-        )
-    }
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        fontWeight = FontWeight.Bold,
+        fontSize = 30.sp,
+        modifier = Modifier.padding(16.dp)
+    )
 }
