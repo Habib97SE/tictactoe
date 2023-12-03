@@ -7,7 +7,7 @@ sealed class Screen(val route: String) {
     object GameScreen : Screen("game")
     object MatchMakingScreen : Screen("match_making")
     object GameSummaryScreen : Screen("game_summary")
-    object HelpScreen : Screen("help")
+    object HowToPlayScreen : Screen("help")
     object AboutScreen : Screen("about")
     object ErrorScreen : Screen("error")
     object LoadingScreen : Screen("loading")
