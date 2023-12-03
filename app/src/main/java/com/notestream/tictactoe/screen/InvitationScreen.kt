@@ -38,7 +38,7 @@ fun InvitationScreen(navController: NavController) {
                 navigationIcon = {
                     IconButton(
                         onClick = {
-                            navController.navigate(Screen.MatchMakingScreen.route)
+                            navController.navigate(Screen.GameLobbyScreen.route)
                         }
                     ) {
                         Icon(
