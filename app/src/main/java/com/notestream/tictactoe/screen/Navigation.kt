@@ -43,6 +43,9 @@ fun Navigation() {
         composable(route = Screen.ProfileScreen.route) {
             ProfileScreen(navController)
         }
+        composable(route = Screen.EditProfileScreen.route) {
+            EditProfileScreen(navController)
+        }
         composable(route = Screen.SettingsScreen.route) {
             SettingsScreen(navController)
         }
