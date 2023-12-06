@@ -1,6 +1,10 @@
 package com.tictactoe.network
 
+
 import androidx.compose.runtime.mutableStateListOf
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import io.github.jan.supabase.createSupabaseClient
 import io.github.jan.supabase.realtime.PresenceAction
 import io.github.jan.supabase.realtime.Realtime
@@ -16,8 +20,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -25,6 +31,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
 import java.util.UUID
+import com.tictactoe.viewmodels.SharedViewModel
 
 @Serializable
 data class Player(
@@ -103,14 +110,16 @@ interface SupabaseCallback {
     suspend fun finishHandler(status: GameResult)
 }
 
-object SupabaseService {
+object SupabaseService : ViewModel() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private val _type: GameType = GameType.TIC_TAC_TOE
     private const val _supabaseUrl = "https://yrqrbupsuyfsyqlrfruw.supabase.co"
-    private const val _supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlycXJidXBzdXlmc3lxbHJmcnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTczODc0NTEsImV4cCI6MjAxMjk2MzQ1MX0.LSEAvPq3gobs9eWhuxF-Ut_e8FNTvQCRumYUjoqMPlU"
-    private val _client = createSupabaseClient(supabaseUrl = _supabaseUrl, supabaseKey = _supabaseKey) {
-        install(Realtime)
-    }
+    private const val _supabaseKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlycXJidXBzdXlmc3lxbHJmcnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTczODc0NTEsImV4cCI6MjAxMjk2MzQ1MX0.LSEAvPq3gobs9eWhuxF-Ut_e8FNTvQCRumYUjoqMPlU"
+    private val _client =
+        createSupabaseClient(supabaseUrl = _supabaseUrl, supabaseKey = _supabaseKey) {
+            install(Realtime)
+        }
     private var _lobby: RealtimeChannel? = null
     private var _game: RealtimeChannel? = null
     private var lobbyPresenceChangeFlow: Flow<PresenceAction>? = null
@@ -121,15 +130,43 @@ object SupabaseService {
     var player: Player? = null
         private set
     var users = mutableStateListOf<Player>()
-        private  set
+        private set(value) {
+            field = value
+            _usersFlow.value = value
+            println("Users: $value")
+        }
     var games = mutableStateListOf<Game>()
         private set
     var currentGame: Game? = null
         private set
     var callbackHandler: SupabaseCallback? = null
 
+    private val sharedViewModel: SharedViewModel = SharedViewModel()
+
+    // invitation response listener state flow
+    private val _invitationResponses = MutableStateFlow<Game?>(null)
+    val invitationResponses: StateFlow<Game?> = _invitationResponses
+
+    // invitation listener state flow
+    private val _invitations = MutableStateFlow<List<Game>>(emptyList())
+    val invitations: StateFlow<List<Game>> = _invitations
+
+    private val _gamesFlow = MutableStateFlow<List<Game>>(emptyList())
+    val gamesFlow: StateFlow<List<Game>> = _gamesFlow
+
+    private val _usersFlow = MutableStateFlow<List<Player>>(emptyList())
+    val usersFlow: StateFlow<List<Player>> = _usersFlow
+
+
+
+    init {
+        setupInvitationResponseListener()
+        setupInvitationListener()
+    }
+
     suspend fun joinLobby(player: Player) {
         serverState.value = ServerState.LOADING_LOBBY
+        println("- Server state from serverState.value: " + serverState.value)
         if (_client.realtime.status.value == Realtime.Status.DISCONNECTED) {
             println("Connect to Realtime")
             _client.realtime.connect()
@@ -148,6 +185,8 @@ object SupabaseService {
                         }
                     users.addAll(newUsers)
 
+                    _usersFlow.value = users
+
                     it.decodeLeavesAs<Player>()
                         .forEach { player ->
                             users.remove(player)
@@ -158,8 +197,14 @@ object SupabaseService {
 
             val gameInvitations = lobby.broadcastFlow<Game>(BroadcastEvent.INVITE.name)
                 .onEach { game ->
-                    if ((game.player2.id == player.id || game.player1.id == player.id) && !games.contains(game)) {
+                    if ((game.player2.id == player.id || game.player1.id == player.id) && !games.contains(
+                            game
+                        )
+                    ) {
                         games.add(game)
+                        val updatedGames = games.toMutableList().apply { add(game) }
+                        _gamesFlow.value = updatedGames
+
                     }
                 }
                 .launchIn(coroutineScope)
@@ -185,6 +230,7 @@ object SupabaseService {
             lobby.track(Json.encodeToJsonElement(player).jsonObject)
             _lobby = lobby
             serverState.value = ServerState.LOBBY
+            println("- Server state from serverState.value: " + serverState.value)
         }
     }
 
@@ -199,6 +245,7 @@ object SupabaseService {
         games.clear()
     }
 
+
     private suspend fun joinGame(
         game: Game
     ) {
@@ -212,13 +259,15 @@ object SupabaseService {
         println("Subscribe to the channel")
         val playerReadyJob = gameChannel.broadcastFlow<GameEvent>(BroadcastEvent.GAME_EVENT.name)
             .onEach { event ->
-                when(event.type) {
+                when (event.type) {
                     GameEventType.PLAYER_READY -> {
                         callbackHandler?.playerReadyHandler()
                     }
+
                     GameEventType.RELEASE_TURN -> {
                         callbackHandler?.releaseTurnHandler()
                     }
+
                     GameEventType.ACTION -> {
                         val x = event.data.first()
                         val y = if (event.data.count() > 1) {
@@ -228,12 +277,14 @@ object SupabaseService {
                         }
                         callbackHandler?.actionHandler(x, y)
                     }
+
                     GameEventType.ANSWER -> {
                         val status = ActionResult.values().getOrNull(event.data.first())
                         if (status != null) {
                             callbackHandler?.answerHandler(status)
                         }
                     }
+
                     GameEventType.FINISH -> {
                         val status = GameResult.values().getOrNull(event.data.first())
                         if (status != null) {
@@ -315,5 +366,32 @@ object SupabaseService {
             event = event.name,
             message = message
         )
+    }
+
+    private fun setupInvitationResponseListener() {
+        viewModelScope.launch {
+            _lobby?.broadcastFlow<Game>(BroadcastEvent.ACCEPT.name)
+                ?.onEach { game ->
+                    _invitationResponses.value = game
+                }
+                ?.launchIn(coroutineScope)
+        }
+        // You can add similar logic for decline if needed
+    }
+
+    fun handleInvitationAcceptance(game: Game) {
+        // Trigger shared ViewModel method
+        sharedViewModel.onInvitationAccepted(game)
+    }
+
+    private fun setupInvitationListener() {
+        viewModelScope.launch {
+            // Assuming 'lobby' is the channel where invitations are broadcasted
+            _lobby?.broadcastFlow<Game>(BroadcastEvent.INVITE.name)
+                ?.onEach { game ->
+                    _invitations.value = _invitations.value + game
+                }
+                ?.launchIn(coroutineScope)
+        }
     }
 }

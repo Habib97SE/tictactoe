@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.tictactoe.viewmodels.SharedViewModel
 
 
 /**
@@ -31,7 +32,8 @@ import androidx.navigation.NavController
  * on footer: network connection status and other necessary but not important info
  */
 @Composable
-fun HomeScreen(navController: NavController) {
+fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
+    val currentPlayer = sharedViewModel.currentPlayer
     Column(
         modifier = Modifier
             .fillMaxSize()

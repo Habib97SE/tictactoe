@@ -1,4 +1,5 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+
 plugins {
     kotlin("plugin.serialization") version "1.6.0"
     id("com.android.application") version "8.1.4" apply false

@@ -8,13 +8,14 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.tictactoe.viewmodels.BoardViewModel
+import com.tictactoe.viewmodels.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Navigation() {
 
     val navController = rememberNavController()
+    val severState = SharedViewModel().serverState
 
     Scaffold(
 
@@ -25,7 +26,7 @@ fun Navigation() {
             startDestination = Screen.HomeScreen.route
         ) {
             composable(Screen.HomeScreen.route) {
-                HomeScreen(navController)
+                HomeScreen(navController, SharedViewModel())
             }
             composable(Screen.AboutScreen.route) {
                 AboutScreen(navController)
@@ -33,8 +34,9 @@ fun Navigation() {
             composable(Screen.ErrorScreen.route) {
                 ErrorScreen(navController, "There has been some error!")
             }
-            composable(Screen.GameScreen.route) {
-                GameScreen(navController, BoardViewModel())
+            composable(Screen.GameScreen.route + "/{gameId}") { backStackEntry ->
+                val gameId = backStackEntry.arguments?.getString("gameId")
+                GameScreen(navController, gameId)
             }
             composable(Screen.GameSummaryScreen.route) {
                 GameSummaryScreen(navController)

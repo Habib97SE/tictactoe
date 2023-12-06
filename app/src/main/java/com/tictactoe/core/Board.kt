@@ -61,11 +61,15 @@ class Board {
         setBoard(row, col, "O")
     }
 
+    fun checkForDraw(): Boolean {
+        return isBoardFull()
+    }
+
     /**
      * Check if the board has a winner
      * @return true if there is a winner, false otherwise
      */
-    fun isWinner(): Boolean {
+    fun checkForWin(): Boolean {
         // if any of the row, col or diagonal is winner, return true else false
         return isWinnerRow() || isWinnerCol() || isWinnerDiagonal()
     }

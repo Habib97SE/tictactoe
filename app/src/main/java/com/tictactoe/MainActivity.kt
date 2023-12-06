@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.tictactoe.screen.GameScreen
 import com.tictactoe.screen.HomeScreen
+import com.tictactoe.screen.Navigation
 import com.tictactoe.ui.theme.TictactoeTheme
 import com.tictactoe.viewmodels.BoardViewModel
 
@@ -23,8 +24,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val navController = rememberNavController()
-                    HomeScreen(navController)
+                    Navigation()
                 }
             }
         }

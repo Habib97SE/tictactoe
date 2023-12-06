@@ -1,4 +1,4 @@
-package com.notestream.tictactoe
+package com.tictactoe
 
 import org.junit.Test
 
