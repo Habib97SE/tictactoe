@@ -6,16 +6,16 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.rememberNavController
-import com.tictactoe.screen.GameScreen
-import com.tictactoe.screen.HomeScreen
+import androidx.compose.ui.tooling.preview.Preview
+import com.tictactoe.screen.LoadingScreen
 import com.tictactoe.screen.Navigation
 import com.tictactoe.ui.theme.TictactoeTheme
-import com.tictactoe.viewmodels.BoardViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContent {
             TictactoeTheme {
@@ -30,4 +30,5 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
 

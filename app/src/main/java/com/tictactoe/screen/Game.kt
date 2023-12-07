@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,13 +24,31 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.tictactoe.viewmodels.GameViewModel
 import androidx.compose.runtime.livedata.observeAsState
+import com.tictactoe.network.SupabaseService
 import com.tictactoe.viewmodels.SharedViewModel
 
 
 @Composable
 fun GameScreen(navController: NavController, gameId: String? = null) {
-    val gameViewModel: GameViewModel = viewModel()
-    val gameState by gameViewModel.gameState.observeAsState()
+    var gameViewModel = GameViewModel()
+    var sharedViewModel = viewModel<SharedViewModel>()
+
+
+    val isFirstGame by gameViewModel.isFirstGame.collectAsState()
+
+    if (isFirstGame) {
+        // Render UI for the first-time setup
+        SetupGameBoardUI(gameViewModel)
+    } else {
+        // Render UI for an ongoing game
+        GameBoardUI(gameViewModel)
+    }
+}
+
+
+@Composable
+fun GameBoardUI(gameViewModel: GameViewModel) {
+
 
     Column(
         modifier = Modifier
@@ -38,11 +57,32 @@ fun GameScreen(navController: NavController, gameId: String? = null) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        gameState?.let {
-            GameBoard(gameState?.board?.getBoard() ?: arrayOf())
-        }
+        Text(
+            text = "Tic Tac Toe",
+            fontSize = 30.sp
+        )
+        GameBoard(board = gameViewModel.board.value ?: emptyArray())
     }
 }
+
+@Composable
+fun SetupGameBoardUI(gameViewModel: GameViewModel) {
+    val board by gameViewModel.board.collectAsState()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Setup Game",
+            fontSize = 30.sp
+        )
+        GameBoard(board = board ?: emptyArray())
+    }
+}
+
 
 @Composable
 fun GameBoard(board: Array<Array<String>>) {
@@ -67,6 +107,7 @@ fun GameBoard(board: Array<Array<String>>) {
                             .width(100.dp)
                             .height(100.dp),
                         contentAlignment = Alignment.Center,
+
                     ) {
                         // Add content here (like X or O based on the board state)
                         Text(

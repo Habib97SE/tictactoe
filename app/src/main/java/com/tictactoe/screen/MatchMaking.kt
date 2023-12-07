@@ -14,16 +14,25 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarData
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -33,6 +42,8 @@ import com.tictactoe.network.Player
 import com.tictactoe.viewmodels.MatchMakingViewModel
 import com.tictactoe.viewmodels.SharedViewModel
 import com.tictactoe.network.Game
+import com.tictactoe.network.SupabaseService
+import kotlinx.coroutines.launch
 
 @Composable
 fun MatchMakingScreen(
@@ -41,6 +52,14 @@ fun MatchMakingScreen(
 ) {
     val matchMakingViewModel: MatchMakingViewModel = viewModel()
     val onlineUsers by matchMakingViewModel.onlineUsers.collectAsState(initial = emptyList())
+    val serverState by SupabaseService.serverStateFlow.collectAsState(initial = null)
+
+
+    // if the gameStartEvent is not null, navigate to the game screen
+    val gameStartEvent by matchMakingViewModel.gameStartEvent.collectAsState(initial = null)
+    gameStartEvent?.let { game ->
+        navController.navigate("loading/${"Preparing the game, please wait ..."}")
+    }
 
 
 
@@ -54,8 +73,8 @@ fun MatchMakingScreen(
         ) {
             Text("Matchmaking Lobby", style = MaterialTheme.typography.headlineMedium)
         }
-        Spacer(modifier = Modifier.padding(8.dp))
-        
+        Divider()
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -114,6 +133,10 @@ fun MatchMakingScreen(
 
 @Composable
 fun UserItem(user: Player, onInviteClicked: () -> Unit) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    var inviteButtonText by remember { mutableStateOf("Invite") }
+    var invitationSent by remember { mutableStateOf(false) }
     if (user.name != SharedViewModel().currentPlayer.name) {
         Row(
             modifier = Modifier
@@ -121,14 +144,33 @@ fun UserItem(user: Player, onInviteClicked: () -> Unit) {
                 .padding(8.dp),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            if (user.name == "") {
-                Text("Anonymous")
-            } else {
-                Text(user.name)
+            if (user.name != SharedViewModel().currentPlayer.name) {
+                if (user.name == "") {
+                    Text("Unknown")
+                } else {
+                    Text(user.name)
+                }
             }
-            OutlinedButton(onClick = { onInviteClicked() }) {
-                Text("Invite")
+            OutlinedButton(onClick = {
+                onInviteClicked()
+                inviteButtonText = "Invited"
+                if (!invitationSent) {
+                    scope.launch {
+                        snackbarHostState.showSnackbar(
+                            message = "Invitation sent",
+                            duration = SnackbarDuration.Short
+                        )
+                    }
+                    invitationSent = true
+                }
+
+            }) {
+                Text(inviteButtonText)
             }
+
+        }
+        SnackbarHost(hostState = snackbarHostState) { data ->
+            Snackbar(snackbarData = data)
         }
     }
 }
@@ -159,3 +201,6 @@ fun InvitationDialog(viewModel: MatchMakingViewModel = viewModel()) {
         )
     }
 }
+
+
+

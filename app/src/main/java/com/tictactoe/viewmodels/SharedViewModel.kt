@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import com.tictactoe.network.Game
@@ -21,6 +22,9 @@ class SharedViewModel : ViewModel() {
 
 
     var currentPlayer by mutableStateOf(Player(name = "Unknown123HHH"))
+
+
+
 
     fun updatePlayerName(name: String) {
         currentPlayer = Player(name = name)

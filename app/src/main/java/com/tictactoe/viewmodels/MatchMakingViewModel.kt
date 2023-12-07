@@ -19,26 +19,34 @@ class MatchMakingViewModel : ViewModel() {
     val invitationResponses: StateFlow<Game?> = SupabaseService.invitationResponses
     val sharedViewModel = SharedViewModel()
     val invitations: StateFlow<List<Game>> = SupabaseService.gamesFlow
+    private val _gameStartEvent = MutableStateFlow<Game?>(null)
+    val gameStartEvent: StateFlow<Game?> = _gameStartEvent
 
     init {
         joinLobby()
         fetchOnlineUsers()
-        setupInvitationListener()
+        setupInvitationResponseListener()
     }
 
-    private fun setupInvitationListener() {
+    private fun setupInvitationResponseListener() {
         viewModelScope.launch {
-            SupabaseService.invitations.collect { newInvitations ->
-                newInvitations.forEach { game ->
-                    if (game.player1.id != sharedViewModel.currentPlayer.id) {
-                        SupabaseService.acceptInvite(game)
-                        SupabaseService.playerReady()
-                    }
+            SupabaseService.invitationResponses.collect { game ->
+                if (game != null && game.player1.id == sharedViewModel.currentPlayer.id) {
+                    // The invitation you sent has been accepted
+                    // You can now proceed to start the game
+                    onInvitationAccepted(game)
                 }
             }
         }
     }
 
+    private fun onInvitationAccepted(game: Game) {
+        viewModelScope.launch {
+            prepareGameState(game)
+            SupabaseService.playerReady()
+            _gameStartEvent.value = game
+        }
+    }
     private fun joinLobby() {
         viewModelScope.launch {
             // get current player from SharedViewModel
@@ -79,5 +87,10 @@ class MatchMakingViewModel : ViewModel() {
         declineInvitation(game)
     }
 
+    private fun prepareGameState(game: Game) {
+        viewModelScope.launch {
+            _gameStartEvent.value = game
+        }
+    }
 
 }

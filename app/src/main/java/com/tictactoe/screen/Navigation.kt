@@ -44,8 +44,11 @@ fun Navigation() {
             composable(Screen.HelpScreen.route) {
                 HelpScreen(navController)
             }
-            composable(Screen.LoadingScreen.route) {
-                LoadingScreen(navController)
+            composable(Screen.LoadingScreen.route + "/{message}") { backStackEntry ->
+                val message = backStackEntry.arguments?.getString("message")
+                if (message != null) {
+                    LoadingScreen(textMessage = message)
+                }
             }
             composable(Screen.MatchMakingScreen.route) {
                 MatchMakingScreen(navController)

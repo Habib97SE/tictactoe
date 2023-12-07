@@ -32,6 +32,7 @@ import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.jsonObject
 import java.util.UUID
 import com.tictactoe.viewmodels.SharedViewModel
+import kotlinx.coroutines.flow.asStateFlow
 
 @Serializable
 data class Player(
@@ -156,6 +157,9 @@ object SupabaseService : ViewModel() {
 
     private val _usersFlow = MutableStateFlow<List<Player>>(emptyList())
     val usersFlow: StateFlow<List<Player>> = _usersFlow
+
+    private val _serverState = MutableStateFlow(ServerState.NOT_CONNECTED)
+    val serverStateFlow: StateFlow<ServerState> = _serverState
 
 
 
