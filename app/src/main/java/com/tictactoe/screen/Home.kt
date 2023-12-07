@@ -1,18 +1,30 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.tictactoe.screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -34,43 +46,104 @@ import com.tictactoe.viewmodels.SharedViewModel
 @Composable
 fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
     val currentPlayer = sharedViewModel.currentPlayer
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Yellow)
-    ) {
-        Header(navController)
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                modifier = Modifier
+                    .height(70.dp),
+                title = {
+                    Text(
+                        modifier = Modifier.padding(10.dp),
+                        text = "TIC-TAC-TOE",
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            navController.navigate(Screen.ProfileScreen.route)
+                        }
+                    ) {
+                        Icon(
+                            Icons.Filled.AccountCircle,
+                            contentDescription = "Profile",
+                            tint = Color.White
+                        )
+                    }
+                },
+                backgroundColor = Color.DarkGray
+            )
+        }
+    ) { paddingValues ->
         Column(
             modifier = Modifier
-                .weight(1f) // This makes the column take up only the necessary space
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
+                .fillMaxSize()
+                .padding(paddingValues)
         ) {
+            Greeting(name = "${currentPlayer.name}")
+            Column(
+                modifier = Modifier
+                    .weight(1f) // This makes the column take up only the necessary space
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Play button
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        navController.navigate(route = Screen.MatchMakingScreen.route)
+                    },
+                    shape = CircleShape,
+                    contentPadding = PaddingValues(10.dp)
+                ) {
+                    Text(
+                        text = "Play",
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp)
+                            .fillMaxWidth(),
+                        color = Color.DarkGray,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
 
-            AddNewMenuItem(text = "Play", route = Screen.MatchMakingScreen.route, navController)
-            AddNewMenuItem(text = "Settings", route = Screen.SettingsScreen.route, navController)
-            AddNewMenuItem(text = "How to play?!", route = Screen.HelpScreen.route, navController)
-            AddNewMenuItem(text = "About us", route = Screen.AboutScreen.route, navController)
-            AddNewMenuItem(text = "Exit", route = "Exit", navController)
+                Spacer(modifier = Modifier.height(16.dp))
+                // HowToPlay button
+                OutlinedButton(
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        navController.navigate(route = Screen.HelpScreen.route)
+                    },
+                    shape = CircleShape,
+                    contentPadding = PaddingValues(10.dp)
+                ) {
+                    Text(
+                        text = "How to play?",
+                        modifier = Modifier
+                            .padding(start = 10.dp, end = 10.dp)
+                            .fillMaxWidth(),
+                        color = Color.DarkGray,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
         }
-        Footer()
     }
 }
 
-
 @Composable
-fun AddNewMenuItem(text: String, route: String, navController: NavController) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        horizontalArrangement = Arrangement.Center
-    ) {
-        OutlinedButton(onClick = {
-            navController.navigate(route)
-        }) {
-            Text(text = text, color = Color.Black, fontSize = 15.sp)
-        }
-    }
+fun Greeting(name: String, modifier: Modifier = Modifier) {
+    Text(
+        text = "Hello $name!",
+        fontWeight = FontWeight.Bold,
+        fontSize = 30.sp,
+        modifier = Modifier.padding(16.dp)
+    )
 }
