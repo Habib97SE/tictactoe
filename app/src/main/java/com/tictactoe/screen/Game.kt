@@ -33,6 +33,13 @@ fun GameScreen(navController: NavController, gameId: String? = null) {
     var gameViewModel = GameViewModel()
     var sharedViewModel = viewModel<SharedViewModel>()
 
+    var currentGame = SupabaseService.currentGame
+
+    Row() {
+        Text(text = "Game Screen")
+        Text(text = "Game ID: ${gameId ?: "null"}")
+    }
+
 
     val isFirstGame by gameViewModel.isFirstGame.collectAsState()
 
@@ -99,6 +106,7 @@ fun GameBoard(board: Array<Array<String>>) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                Text("Game Board")
                 for (col in 0..2) {
                     Box(
                         modifier = Modifier
@@ -108,7 +116,7 @@ fun GameBoard(board: Array<Array<String>>) {
                             .height(100.dp),
                         contentAlignment = Alignment.Center,
 
-                    ) {
+                        ) {
                         // Add content here (like X or O based on the board state)
                         Text(
                             text = board[row][col],

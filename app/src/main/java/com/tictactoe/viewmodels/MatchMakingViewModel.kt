@@ -19,7 +19,7 @@ class MatchMakingViewModel : ViewModel() {
     val invitationResponses: StateFlow<Game?> = SupabaseService.invitationResponses
     val sharedViewModel = SharedViewModel()
     val invitations: StateFlow<List<Game>> = SupabaseService.gamesFlow
-    private val _gameStartEvent = MutableStateFlow<Game?>(null)
+    val _gameStartEvent = MutableStateFlow<Game?>(null)
     val gameStartEvent: StateFlow<Game?> = _gameStartEvent
 
     init {
@@ -44,9 +44,9 @@ class MatchMakingViewModel : ViewModel() {
         viewModelScope.launch {
             prepareGameState(game)
             SupabaseService.playerReady()
-            _gameStartEvent.value = game
         }
     }
+
     private fun joinLobby() {
         viewModelScope.launch {
             // get current player from SharedViewModel
@@ -80,6 +80,9 @@ class MatchMakingViewModel : ViewModel() {
     private fun declineInvitation(game: Game) {
         viewModelScope.launch {
             SupabaseService.declineInvite(game)
+            // remove the invitation from the list of invitations
+            // so that it is no longer displayed
+            invitations.value.toMutableList().remove(game)
         }
     }
 

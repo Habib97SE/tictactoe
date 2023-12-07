@@ -56,12 +56,13 @@ fun MatchMakingScreen(
     val onlineUsers by matchMakingViewModel.onlineUsers.collectAsState()
     val receivedChallenges by SupabaseService.gamesFlow.collectAsState()
 
+    // subscribe and listen to changes on gameStartEvent in matchMakingViewModel
+    val gameStartEvent by matchMakingViewModel.gameStartEvent.collectAsState()
+    if (gameStartEvent != null) {
+        navController.navigate("loading/${"GAME_LOADING"}")
+    }
 
-    // if the gameStartEvent is not null, navigate to the game screen
-//    val gameStartEvent by matchMakingViewModel.gameStartEvent.collectAsState(initial = null)
-//    gameStartEvent?.let { game ->
-//        navController.navigate("loading/${"Preparing the game, please wait ..."}")
-//    }
+
 
     Column(
         modifier = Modifier
@@ -93,14 +94,24 @@ fun MatchMakingScreen(
 
                 LazyColumn {
                     items(onlineUsers) { user ->
-                        UserItem(user = user) {
-                            matchMakingViewModel.sendInvitation(user)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(user.name)
+                            OutlinedButton(onClick = {
+                                matchMakingViewModel.sendInvitation(user)
+                            }) {
+                                Text("Invite")
+                            }
                         }
                     }
                 }
             }
         }
-
+        Divider()
         // add invitations:
         if (receivedChallenges.isEmpty()) {
             Text("No invitations")
@@ -173,6 +184,7 @@ fun UserItem(user: Player, onInviteClicked: () -> Unit) {
                     }
                     invitationSent = true
                 }
+
 
             }) {
                 Text(inviteButtonText)
