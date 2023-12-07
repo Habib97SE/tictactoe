@@ -55,13 +55,20 @@ fun MatchMakingScreen(
     val matchMakingViewModel: MatchMakingViewModel = viewModel()
     val onlineUsers by matchMakingViewModel.onlineUsers.collectAsState()
     val receivedChallenges by SupabaseService.gamesFlow.collectAsState()
+    val currentGame by SupabaseService.gameStartEvent.collectAsState()
 
     // subscribe and listen to changes on gameStartEvent in matchMakingViewModel
     val gameStartEvent by matchMakingViewModel.gameStartEvent.collectAsState()
-    if (gameStartEvent != null) {
-        navController.navigate("loading/${"GAME_LOADING"}")
+    LaunchedEffect(currentGame) {
+        currentGame?.let { game ->
+            // Navigate to the game screen with the game ID or other necessary info
+            navController.navigate(Screen.GameScreen.route + "/${game.id}") {
+                popUpTo(Screen.MatchMakingScreen.route) {
+                    inclusive = true
+                }
+            }
+        }
     }
-
 
 
     Column(
@@ -81,7 +88,7 @@ fun MatchMakingScreen(
         }
         Divider()
 
-        // Add online users:
+        //online users:
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -91,21 +98,10 @@ fun MatchMakingScreen(
             if (onlineUsers.isEmpty()) {
                 Text("No online users")
             } else {
-
                 LazyColumn {
                     items(onlineUsers) { user ->
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            Text(user.name)
-                            OutlinedButton(onClick = {
-                                matchMakingViewModel.sendInvitation(user)
-                            }) {
-                                Text("Invite")
-                            }
+                        UserItem(user = user) {
+                            matchMakingViewModel.sendInvitation(user)
                         }
                     }
                 }
@@ -148,7 +144,6 @@ fun MatchMakingScreen(
             }
         }
     }
-
 }
 
 
@@ -184,8 +179,6 @@ fun UserItem(user: Player, onInviteClicked: () -> Unit) {
                     }
                     invitationSent = true
                 }
-
-
             }) {
                 Text(inviteButtonText)
             }
@@ -200,7 +193,6 @@ fun UserItem(user: Player, onInviteClicked: () -> Unit) {
 
 @Composable
 fun InvitationDialog(game: Game) {
-
 }
 
 

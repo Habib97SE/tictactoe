@@ -161,6 +161,9 @@ object SupabaseService : ViewModel() {
     private val _serverState = MutableStateFlow(ServerState.NOT_CONNECTED)
     val serverStateFlow: StateFlow<ServerState> = _serverState
 
+    private val _currentGame = MutableStateFlow<Game?>(null)
+    val gameStartEvent: StateFlow<Game?> = _currentGame.asStateFlow()
+
 
 
     init {
