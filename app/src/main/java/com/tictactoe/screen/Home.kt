@@ -84,7 +84,7 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            Greeting(name = "${SharedViewModel().currentPlayer.name}")
+            Greeting(name = "${currentPlayer.name}")
             Column(
                 modifier = Modifier
                     .weight(1f) // This makes the column take up only the necessary space
