@@ -55,17 +55,13 @@ fun MatchMakingScreen(
     val matchMakingViewModel: MatchMakingViewModel = viewModel()
     val onlineUsers by matchMakingViewModel.onlineUsers.collectAsState()
     val receivedChallenges by SupabaseService.gamesFlow.collectAsState()
-    val currentGame by SupabaseService.gameStartEvent.collectAsState()
 
-    // subscribe and listen to changes on gameStartEvent in matchMakingViewModel
-    val gameStartEvent by matchMakingViewModel.gameStartEvent.collectAsState()
+    val currentGame by SupabaseService.currentGame.collectAsState()
+
     LaunchedEffect(currentGame) {
         currentGame?.let { game ->
-            // Navigate to the game screen with the game ID or other necessary info
-            navController.navigate(Screen.GameScreen.route + "/${game.id}") {
-                popUpTo(Screen.MatchMakingScreen.route) {
-                    inclusive = true
-                }
+            navController.navigate("game/${game.id}") {
+                popUpTo("match_making") { inclusive = true }
             }
         }
     }

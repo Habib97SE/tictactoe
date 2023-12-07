@@ -138,8 +138,8 @@ object SupabaseService : ViewModel() {
         }
     var games = mutableStateListOf<Game>()
         private set
-    var currentGame: Game? = null
-        private set
+//    var currentGame: Game? = null
+//        private set
     var callbackHandler: SupabaseCallback? = null
 
     private val sharedViewModel: SharedViewModel = SharedViewModel()
@@ -162,7 +162,7 @@ object SupabaseService : ViewModel() {
     val serverStateFlow: StateFlow<ServerState> = _serverState
 
     private val _currentGame = MutableStateFlow<Game?>(null)
-    val gameStartEvent: StateFlow<Game?> = _currentGame.asStateFlow()
+    val currentGame: StateFlow<Game?> = _currentGame.asStateFlow()
 
 
 
@@ -256,7 +256,7 @@ object SupabaseService : ViewModel() {
     private suspend fun joinGame(
         game: Game
     ) {
-        currentGame = game
+        _currentGame.value = game
         println("Leave Lobby")
         leaveLobby()
         serverState.value = ServerState.LOADING_GAME

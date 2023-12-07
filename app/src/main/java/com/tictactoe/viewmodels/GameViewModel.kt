@@ -29,12 +29,7 @@ class GameViewModel : ViewModel() {
     private val _board = MutableStateFlow(Array(3) { Array(3) { "" } })
     val board: StateFlow<Array<Array<String>>> = _board.asStateFlow()
 
-    val _currentGame = SupabaseService.currentGame
-
     init {
-        if (_currentGame != null) {
-            initializeGame(_currentGame)
-        }
 
         SupabaseService.callbackHandler = object : SupabaseCallback {
             override suspend fun playerReadyHandler() {
@@ -85,7 +80,7 @@ class GameViewModel : ViewModel() {
                 // Update the local game state to reflect the initial board state
                 val initialState = GameState(
                     board = Board(),
-                    currentPlayer = determineStartingPlayer(currentGame),
+                    currentPlayer = Player("Player1", symbol = "X"),
                     isGameOver = false,
                     winner = null
                 )
@@ -106,7 +101,7 @@ class GameViewModel : ViewModel() {
                 // Update the local game state to reflect that both players are ready
                 val initialState = GameState(
                     board = Board(),
-                    currentPlayer = determineStartingPlayer(currentGame),
+                    currentPlayer = Player("Player1", symbol = "X"),
                     isGameOver = false,
                     winner = null
                 )

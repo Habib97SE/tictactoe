@@ -106,7 +106,6 @@ fun GameBoard(board: Array<Array<String>>) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Game Board")
                 for (col in 0..2) {
                     Box(
                         modifier = Modifier
