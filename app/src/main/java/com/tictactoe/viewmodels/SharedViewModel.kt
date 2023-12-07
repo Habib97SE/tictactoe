@@ -20,13 +20,15 @@ class SharedViewModel : ViewModel() {
     val invitationResponse: StateFlow<Game?> = _invitationResponse
     val serverState: StateFlow<ServerState> = SupabaseService.serverState.asStateFlow()
 
-    val currentPlayer = Player(name = "Player")
+    var currentPlayer by mutableStateOf(Player(name = ""))
+
+    // Update username
+    fun changeUsername(newName: String) {
+        currentPlayer = currentPlayer.copy(name = newName)
+    }
     fun onInvitationAccepted(game: Game) {
         viewModelScope.launch {
             _invitationResponse.emit(game)
         }
-    }
-    fun changeUsername(name: String) {
-        currentPlayer.updateName(name)
     }
 }

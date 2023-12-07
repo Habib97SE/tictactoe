@@ -34,13 +34,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.tictactoe.viewmodels.SharedViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WelcomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
-    var currentPlayer = sharedViewModel.currentPlayer
+    var playerName by remember { mutableStateOf(sharedViewModel.currentPlayer.name) }
     var newUsername by remember { mutableStateOf("") }
     var isErrorInUsername by rememberSaveable { mutableStateOf(false) }
 
@@ -119,7 +120,6 @@ fun WelcomeScreen(navController: NavController, sharedViewModel: SharedViewModel
                             sharedViewModel.changeUsername(newUsername)
                             navController.navigate(Screen.HomeScreen.route)
                         }
-                        navController.navigate(Screen.HomeScreen.route)
                     }
                 ) {
                     Text(text = "ENTER GAME")
