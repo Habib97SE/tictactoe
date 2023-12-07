@@ -1,7 +1,8 @@
-@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class)
 
 package com.tictactoe.screen
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,18 +11,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Card
+import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,17 +31,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.tictactoe.viewmodels.SharedViewModel
-import androidx.compose.material3.OutlinedTextField
-import com.tictactoe.core.Player
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileScreen(navController: NavController, sharedViewModel: SharedViewModel) {
-    val currentPlayer = sharedViewModel.currentPlayer
-    var newUsername by remember { mutableStateOf(currentPlayer.name) }
+fun WelcomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
+    var currentPlayer = sharedViewModel.currentPlayer
+    var newUsername by remember { mutableStateOf("") }
     var isErrorInUsername by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
@@ -53,39 +53,42 @@ fun ProfileScreen(navController: NavController, sharedViewModel: SharedViewModel
                 title = {
                     Text(
                         modifier = Modifier.padding(10.dp),
-                        text = "USER PROFILE",
+                        text = "TIC-TAC-TOE",
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
                     )
                 },
-                navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navController.navigate(Screen.HomeScreen.route)
-                        }
-                    ) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "back_icon",
-                            tint = Color.White
-                        )
-                    }
-                },
                 backgroundColor = Color.DarkGray
             )
         }
-    ) { paddingValues ->
+    ) { innerPadding ->
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(paddingValues)
+                .padding(innerPadding)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Welcome to TIC-TAC-TOE!",
+                textAlign = TextAlign.Center,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "Please enter your nickname:",
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(start = 15.dp, end = 15.dp)
+            )
+            Spacer(modifier = Modifier.height(5.dp))
             OutlinedTextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 10.dp, end = 10.dp),
+                    .padding(start = 15.dp, end = 15.dp),
                 value = newUsername,
                 onValueChange = {
                     newUsername = it
@@ -112,20 +115,16 @@ fun ProfileScreen(navController: NavController, sharedViewModel: SharedViewModel
                     modifier = Modifier.padding(start = 10.dp, end = 10.dp),
                     onClick =
                     {
-                        if (newUsername.length > 2) {
-                            sharedViewModel.currentPlayer.name = newUsername
+                        if (newUsername.length > 3) {
+                            sharedViewModel.changeUsername(newUsername)
                             navController.navigate(Screen.HomeScreen.route)
                         }
+                        navController.navigate(Screen.HomeScreen.route)
                     }
                 ) {
-                    Text(text = "CONFIRM CHANGES")
+                    Text(text = "ENTER GAME")
                 }
             }
         }
     }
-}
-
-// If username is less than three characters, return TRUE
-fun isUsernameError (input: String) : Boolean {
-    return (input.length < 3)
 }

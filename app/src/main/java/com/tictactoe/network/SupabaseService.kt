@@ -39,8 +39,12 @@ data class Player(
     @SerialName("id")
     val id: String = UUID.randomUUID().toString(),
     @SerialName("name")
-    val name: String
-)
+    var name: String
+) {
+    fun updateName(newName: String) {
+        name = newName
+    }
+}
 
 @Serializable
 data class Game(

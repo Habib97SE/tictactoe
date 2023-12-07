@@ -23,8 +23,11 @@ fun Navigation() {
         NavHost(
             modifier = Modifier.padding(innerPadding),
             navController = navController,
-            startDestination = Screen.HomeScreen.route
+            startDestination = Screen.WelcomeScreen.route
         ) {
+            composable(Screen.WelcomeScreen.route) {
+                WelcomeScreen(navController, SharedViewModel())
+            }
             composable(Screen.HomeScreen.route) {
                 HomeScreen(navController, SharedViewModel())
             }
@@ -54,7 +57,7 @@ fun Navigation() {
                 MatchMakingScreen(navController)
             }
             composable(Screen.ProfileScreen.route) {
-                ProfileScreen(navController)
+                ProfileScreen(navController, SharedViewModel())
             }
             composable(Screen.SettingsScreen.route) {
                 SettingsScreen(navController)

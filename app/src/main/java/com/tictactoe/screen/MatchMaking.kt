@@ -126,7 +126,7 @@ fun MatchMakingScreen(
                         Text(game.player2.name)
                         TextButton(onClick = {
                             matchMakingViewModel.acceptInvitation(game)
-                            navController.navigate("loading/${"GAME_LAODING"}")
+                            navController.navigate("loading/${"GAME_LOADING"}")
                         }) {
                             Text("Accept")
                         }

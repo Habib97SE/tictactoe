@@ -28,8 +28,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.tictactoe.core.Player
 import com.tictactoe.viewmodels.SharedViewModel
-
 
 /**
  * Home screen is the main view of the game.
@@ -45,7 +45,6 @@ import com.tictactoe.viewmodels.SharedViewModel
  */
 @Composable
 fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
-    val currentPlayer = sharedViewModel.currentPlayer
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -84,7 +83,7 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            Greeting(name = "${currentPlayer.name}")
+            Greeting(name = sharedViewModel.currentPlayer.name)
             Column(
                 modifier = Modifier
                     .weight(1f) // This makes the column take up only the necessary space
@@ -111,8 +110,7 @@ fun HomeScreen(navController: NavController, sharedViewModel: SharedViewModel) {
                         textAlign = TextAlign.Center
                     )
                 }
-
-                Spacer(modifier = Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(15.dp))
                 // HowToPlay button
                 OutlinedButton(
                     modifier = Modifier.fillMaxWidth(),

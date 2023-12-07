@@ -1,9 +1,10 @@
 package com.tictactoe.core
-
-
-class Player(var name: String, var score: Int = 0, var isWinner: Boolean = false, var symbol: String) {
-
-
+class Player(
+    var name: String,
+    var score: Int = 0,
+    var isWinner: Boolean = false,
+    var symbol: String = ""
+) {
     fun addScore() {
         score++
     }
@@ -15,5 +16,9 @@ class Player(var name: String, var score: Int = 0, var isWinner: Boolean = false
 
     fun setWinner() {
         isWinner = true
+    }
+
+    fun updateName(newName: String) {
+        name = newName
     }
 }

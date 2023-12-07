@@ -1,6 +1,7 @@
 package com.tictactoe.screen
 
 sealed class Screen(val route: String) {
+    object WelcomeScreen : Screen("welcome")
     object HomeScreen : Screen("home")
     object SettingsScreen : Screen("settings")
     object ProfileScreen : Screen("profile")
