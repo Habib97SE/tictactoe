@@ -35,19 +35,24 @@ import kotlinx.coroutines.delay
 import com.tictactoe.network.SupabaseService
 
 @Composable
-fun LoadingScreen(textMessage: String = "Loading ...") {
-    val serverState by SupabaseService.serverState.collectAsState()
+fun LoadingScreen(navController: NavController, textMessage: String = "Loading ...") {
 
+    val serverState by SupabaseService.serverStateFlow.collectAsState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        LoadingAnimation(textMessage = textMessage)
+    if (textMessage == "GAME_LOADING") {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            LoadingAnimation(textMessage = "Preparing the game, please wait ...")
+            navController.navigate(Screen.GameScreen.route)
+        }
     }
+
+
 }
 
 

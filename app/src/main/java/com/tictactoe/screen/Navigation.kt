@@ -47,7 +47,7 @@ fun Navigation() {
             composable(Screen.LoadingScreen.route + "/{message}") { backStackEntry ->
                 val message = backStackEntry.arguments?.getString("message")
                 if (message != null) {
-                    LoadingScreen(textMessage = message)
+                    LoadingScreen(navController, message)
                 }
             }
             composable(Screen.MatchMakingScreen.route) {

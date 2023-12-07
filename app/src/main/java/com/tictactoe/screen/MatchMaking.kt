@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -34,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -51,20 +53,23 @@ fun MatchMakingScreen(
     sharedViewModel: SharedViewModel = viewModel()
 ) {
     val matchMakingViewModel: MatchMakingViewModel = viewModel()
-    val onlineUsers by matchMakingViewModel.onlineUsers.collectAsState(initial = emptyList())
-    val serverState by SupabaseService.serverStateFlow.collectAsState(initial = null)
+    val onlineUsers by matchMakingViewModel.onlineUsers.collectAsState()
+    val receivedChallenges by SupabaseService.gamesFlow.collectAsState()
 
 
     // if the gameStartEvent is not null, navigate to the game screen
-    val gameStartEvent by matchMakingViewModel.gameStartEvent.collectAsState(initial = null)
-    gameStartEvent?.let { game ->
-        navController.navigate("loading/${"Preparing the game, please wait ..."}")
-    }
+//    val gameStartEvent by matchMakingViewModel.gameStartEvent.collectAsState(initial = null)
+//    gameStartEvent?.let { game ->
+//        navController.navigate("loading/${"Preparing the game, please wait ..."}")
+//    }
 
-
-
-
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -75,6 +80,7 @@ fun MatchMakingScreen(
         }
         Divider()
 
+        // Add online users:
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -84,6 +90,7 @@ fun MatchMakingScreen(
             if (onlineUsers.isEmpty()) {
                 Text("No online users")
             } else {
+
                 LazyColumn {
                     items(onlineUsers) { user ->
                         UserItem(user = user) {
@@ -94,39 +101,42 @@ fun MatchMakingScreen(
             }
         }
 
+        // add invitations:
+        if (receivedChallenges.isEmpty()) {
+            Text("No invitations")
+        } else {
+            Row {
+                Text(text = "Invitations")
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
 
-    }
 
-    //if there is invitations, show the dialog
-    val invitations by matchMakingViewModel.invitations.collectAsState(initial = emptyList())
-    if (invitations.isNotEmpty()) {
-        InvitationDialog()
-    }
-
-    // if there is invitationResponses, show the dialog
-    val invitationResponses by matchMakingViewModel.invitationResponses.collectAsState(initial = null)
-    invitationResponses?.let { game ->
-        AlertDialog(
-            onDismissRequest = { matchMakingViewModel.dismissInvitation(game) },
-            title = { Text(text = "Invitation") },
-            text = { Text(text = "You have been invited to play with ${game.player1.name}") },
-            confirmButton = {
-                Button(onClick = {
-                    matchMakingViewModel.acceptInvitation(game)
-                }) {
-                    Text(text = "Accept")
-                }
-            },
-            dismissButton = {
-                Button(onClick = {
-                    matchMakingViewModel.dismissInvitation(game)
-                }) {
-                    Text(text = "Decline")
+                receivedChallenges.forEach { game ->
+                    Row() {
+                        Text(game.player1.name)
+                        Text(" vs ")
+                        Text(game.player2.name)
+                        TextButton(onClick = {
+                            matchMakingViewModel.acceptInvitation(game)
+                            navController.navigate("loading/${"GAME_LAODING"}")
+                        }) {
+                            Text("Accept")
+                        }
+                        TextButton(onClick = {
+                            matchMakingViewModel.dismissInvitation(game)
+                        }) {
+                            Text("Reject")
+                        }
+                    }
                 }
             }
-        )
+        }
     }
-
 
 }
 
@@ -177,29 +187,8 @@ fun UserItem(user: Player, onInviteClicked: () -> Unit) {
 
 
 @Composable
-fun InvitationDialog(viewModel: MatchMakingViewModel = viewModel()) {
-    val invitationResponses by viewModel.invitationResponses.collectAsState(initial = null)
-    invitationResponses?.let { game ->
-        AlertDialog(
-            onDismissRequest = { viewModel.dismissInvitation(game) },
-            title = { Text(text = "Invitation") },
-            text = { Text(text = "You have been invited to play with ${game.player1.name}") },
-            confirmButton = {
-                Button(onClick = {
-                    viewModel.acceptInvitation(game)
-                }) {
-                    Text(text = "Accept")
-                }
-            },
-            dismissButton = {
-                Button(onClick = {
-                    viewModel.dismissInvitation(game)
-                }) {
-                    Text(text = "Decline")
-                }
-            }
-        )
-    }
+fun InvitationDialog(game: Game) {
+
 }
 
 
