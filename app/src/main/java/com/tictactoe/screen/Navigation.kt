@@ -5,6 +5,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -15,7 +16,8 @@ import com.tictactoe.viewmodels.SharedViewModel
 fun Navigation() {
 
     val navController = rememberNavController()
-    val severState = SharedViewModel().serverState
+    val sharedViewModel: SharedViewModel = viewModel()
+    val severState = sharedViewModel.serverState
 
     Scaffold(
 
@@ -23,10 +25,13 @@ fun Navigation() {
         NavHost(
             modifier = Modifier.padding(innerPadding),
             navController = navController,
-            startDestination = Screen.HomeScreen.route
+            startDestination = Screen.WelcomeScreen.route
         ) {
+            composable(Screen.WelcomeScreen.route) {
+                WelcomeScreen(navController, sharedViewModel)
+            }
             composable(Screen.HomeScreen.route) {
-                HomeScreen(navController, SharedViewModel())
+                HomeScreen(navController, sharedViewModel)
             }
             composable(Screen.AboutScreen.route) {
                 AboutScreen(navController)
@@ -54,7 +59,7 @@ fun Navigation() {
                 MatchMakingScreen(navController)
             }
             composable(Screen.ProfileScreen.route) {
-                ProfileScreen(navController)
+                ProfileScreen(navController, sharedViewModel)
             }
             composable(Screen.SettingsScreen.route) {
                 SettingsScreen(navController)

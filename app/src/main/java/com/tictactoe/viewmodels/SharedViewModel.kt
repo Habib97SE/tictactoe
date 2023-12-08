@@ -24,6 +24,7 @@ class SharedViewModel : ViewModel(), SupabaseCallback {
     val invitationResponse: StateFlow<Game?> = _invitationResponse
     val serverState: StateFlow<ServerState> = SupabaseService.serverState.asStateFlow()
 
+
     // Listen to the opponent who accepted your invitation to start the game
     private val _opponentReady = MutableStateFlow(false)
     val opponentReady: StateFlow<Boolean> = _opponentReady.asStateFlow()
@@ -36,9 +37,7 @@ class SharedViewModel : ViewModel(), SupabaseCallback {
     private val _opponentMove = MutableStateFlow<Pair<Int, Int>?>(null)
     val opponentMove: StateFlow<Pair<Int, Int>?> = _opponentMove.asStateFlow()
 
-
-
-    var currentPlayer by mutableStateOf(Player(name = "Habib"))
+    var currentPlayer by mutableStateOf(Player(name = ""))
 
     init {
         SupabaseService.callbackHandler = this
@@ -56,16 +55,16 @@ class SharedViewModel : ViewModel(), SupabaseCallback {
         }
     }
 
-    fun updatePlayerName(name: String) {
-        currentPlayer = Player(name = name)
+    fun changeUsername(newName: String) {
+        currentPlayer = currentPlayer.copy(name = newName)
     }
 
     fun onInvitationAccepted(game: Game) {
         viewModelScope.launch {
             _invitationResponse.emit(game)
-
         }
     }
+
 
     /**
      * This will be called when the other player sends a playerReady message
@@ -111,6 +110,5 @@ class SharedViewModel : ViewModel(), SupabaseCallback {
             SupabaseService.gameFinish(GameResult.DRAW)
         }
     }
-
 
 }

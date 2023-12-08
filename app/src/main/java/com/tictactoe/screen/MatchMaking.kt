@@ -75,46 +75,19 @@ fun MatchMakingScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                modifier = Modifier
-                    .height(70.dp),
-                title = {
-                    Text(
-                        modifier = Modifier.padding(10.dp),
-                        text = "LOBBY",
-                        fontSize = 25.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                },
+                title = { Text("Match Making") },
                 navigationIcon = {
-                    IconButton(
-                        onClick = {
-                            navController.navigate(Screen.HomeScreen.route)
-                        }
-                    ) {
-                        Icon(
-                            Icons.Default.ArrowBack,
-                            contentDescription = "back_icon",
-                            tint = Color.White
-                        )
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
-                    IconButton(
-                        onClick = {
-                            navController.navigate(Screen.ProfileScreen.route)
-                        }
-                    ) {
-                        Icon(
-                            Icons.Filled.AccountCircle, contentDescription = "Profile",
-                            tint = Color.White
-                        )
+                    IconButton(onClick = { navController.navigate("profile") }) {
+                        Icon(Icons.Filled.AccountCircle, contentDescription = "Profile")
                     }
-                },
-
-                backgroundColor = Color.DarkGray
+                }
             )
-        },
+        }
     ) { paddingValues ->
         Column(
             modifier = Modifier
@@ -122,91 +95,47 @@ fun MatchMakingScreen(
                 .padding(paddingValues)
         ) {
 
-
-            Column(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                ) {
-                    //online users:
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            Text("Online Users")
-                        }
-                        if (onlineUsers.size == 1 && onlineUsers[0].name == sharedViewModel.currentPlayer.name) {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                Text("No online users", fontSize = 24.sp)
-                            }
-                        } else {
-                            LazyColumn {
-                                items(onlineUsers) { user ->
-                                    UserItem(user = user) {
-                                        matchMakingViewModel.sendInvitation(user)
-                                    }
-                                }
-                            }
-                        }
+            Box(modifier = Modifier.fillMaxSize()) {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    item {
+                        Text(
+                            text = "Online Users",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                        Divider(color = Color.Gray, thickness = 1.dp)
+                    }
+                    items(onlineUsers) { user ->
+                        UserItem(user = user, onInviteClicked = {
+                            matchMakingViewModel.sendInvitation(user)
+                        })
+                    }
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text(
+                            text = "Invitations",
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.Bold,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                        Divider(color = Color.Gray, thickness = 1.dp)
+                    }
+                    items(receivedChallenges) { game ->
+                        InvitationListItem(game = game, navController = navController)
                     }
                 }
-                Divider()
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .fillMaxWidth()
-                ) {
-                    // add invitations:
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Text(text = "Invitations")
-                    }
-                    if (receivedChallenges.isEmpty()) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Text("No invitations", fontSize = 24.sp)
-                        }
-                    } else {
-
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            receivedChallenges.forEach { game ->
-                                InvitationListItem(game = game, navController = navController)
-                            }
-                        }
-                    }
+                if (onlineUsers.isEmpty()) {
+                    Text(
+                        text = "No online users",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.Center)
+                    )
                 }
             }
         }
     }
-
 
 }
 
