@@ -43,18 +43,6 @@ class SharedViewModel : ViewModel(), SupabaseCallback {
         SupabaseService.callbackHandler = this
     }
 
-    fun releaseTurn() {
-        viewModelScope.launch {
-            SupabaseService.releaseTurn()
-        }
-    }
-
-    fun sendTurn(row: Int, col: Int) {
-        viewModelScope.launch {
-            SupabaseService.sendTurn(row, col)
-        }
-    }
-
     fun changeUsername(newName: String) {
         currentPlayer = currentPlayer.copy(name = newName)
     }

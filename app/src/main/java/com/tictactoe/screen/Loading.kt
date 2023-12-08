@@ -37,21 +37,25 @@ import com.tictactoe.network.SupabaseService
 @Composable
 fun LoadingScreen(navController: NavController, textMessage: String = "Loading ...") {
 
-    val serverState by SupabaseService.serverStateFlow.collectAsState()
+    var text: String = ""
 
-    if (textMessage == "GAME_LOADING") {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            LoadingAnimation(textMessage = "Preparing the game, please wait ...")
-            navController.navigate(Screen.GameScreen.route)
-        }
+    if (textMessage == "LOADING_GAME") {
+        text = "Loading Game ..."
+    } else if (textMessage == "LOADING_LOBBY") {
+        text = "Loading Lobby ..."
+    } else {
+        text = "Loading ..."
     }
 
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        LoadingAnimation(textMessage = text)
+    }
 
 }
 
