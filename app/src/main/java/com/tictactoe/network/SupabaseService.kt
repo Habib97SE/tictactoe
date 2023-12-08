@@ -104,6 +104,7 @@ enum class BroadcastEvent(name: String) {
 }
 
 interface SupabaseCallback {
+
     suspend fun playerReadyHandler()
     suspend fun releaseTurnHandler()
     suspend fun actionHandler(x: Int, y: Int)
@@ -138,8 +139,8 @@ object SupabaseService : ViewModel() {
         }
     var games = mutableStateListOf<Game>()
         private set
-//    var currentGame: Game? = null
-//        private set
+    var currentGame: Game? = null
+        private set
     var callbackHandler: SupabaseCallback? = null
 
     private val sharedViewModel: SharedViewModel = SharedViewModel()
@@ -161,9 +162,8 @@ object SupabaseService : ViewModel() {
     private val _serverState = MutableStateFlow(ServerState.NOT_CONNECTED)
     val serverStateFlow: StateFlow<ServerState> = _serverState
 
-    private val _currentGame = MutableStateFlow<Game?>(null)
-    val currentGame: StateFlow<Game?> = _currentGame.asStateFlow()
-
+    private val _gameState = MutableStateFlow<Game?>(null)
+    val gameState: StateFlow<Game?> = _gameState.asStateFlow()
 
 
     init {
@@ -256,7 +256,7 @@ object SupabaseService : ViewModel() {
     private suspend fun joinGame(
         game: Game
     ) {
-        _currentGame.value = game
+        currentGame = game
         println("Leave Lobby")
         leaveLobby()
         serverState.value = ServerState.LOADING_GAME
