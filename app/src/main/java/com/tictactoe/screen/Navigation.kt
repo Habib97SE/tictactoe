@@ -31,15 +31,10 @@ fun Navigation() {
             navController = navController,
             startDestination = Screen.WelcomeScreen.route
         ) {
-            composable(Screen.WelcomeScreen.route) {
-                WelcomeScreen(navController, sharedViewModel)
-            }
             composable(Screen.HomeScreen.route) {
                 HomeScreen(navController, sharedViewModel)
             }
-            composable(Screen.AboutScreen.route) {
-                AboutScreen(navController)
-            }
+
             composable(Screen.ErrorScreen.route) {
                 ErrorScreen(navController, "There has been some error!")
             }
@@ -65,9 +60,11 @@ fun Navigation() {
             composable(Screen.ProfileScreen.route) {
                 ProfileScreen(navController, sharedViewModel)
             }
-            composable(Screen.SettingsScreen.route) {
-                SettingsScreen(navController)
+
+            composable(Screen.WelcomeScreen.route) {
+                WelcomeScreen(navController, sharedViewModel)
             }
+
         }
     }
 

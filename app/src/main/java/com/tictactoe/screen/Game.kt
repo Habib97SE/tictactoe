@@ -45,6 +45,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.IconButton
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import com.tictactoe.network.ServerState
 
 
 @Composable
@@ -58,9 +59,10 @@ fun GameScreen(navController: NavController, gameId: String? = null) {
     val snackbarHostState = remember { SnackbarHostState() }
     val opponentMove by sharedViewModel.opponentMove.collectAsState()
 
+
+    // when opponentMove varianle is not null, then update the board with opponent's move
     if (opponentMove != null) {
         gameViewModel.updateBoard(opponentMove!!.first, opponentMove!!.second, "O")
-
     }
 
     LaunchedEffect(isMyTurn) {

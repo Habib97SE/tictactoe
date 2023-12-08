@@ -69,6 +69,7 @@
         fun sendInvitation(toPlayer: Player) {
             viewModelScope.launch {
                 SupabaseService.invite(toPlayer)
+
             }
         }
 

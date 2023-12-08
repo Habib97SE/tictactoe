@@ -41,8 +41,15 @@ class GameViewModel : ViewModel() {
 
     fun updateBoard(row: Int, col: Int) {
         viewModelScope.launch {
+            val playerSymbol = "X"
+            if (_board.value[row][col].isEmpty()) {
+                val newBoard = _board.value.copyOf().apply {
+                    this[row][col] = playerSymbol
+                }
+                _board.value = newBoard
+                checkGameResult()
+            }
             SupabaseService.sendTurn(row, col)
-            checkGameResult()
         }
     }
 
