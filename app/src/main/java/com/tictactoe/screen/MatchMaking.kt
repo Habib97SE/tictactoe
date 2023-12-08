@@ -67,7 +67,9 @@ fun MatchMakingScreen(
     // when opponent sends playerReady, navigate to game screen
     val opponentReady by sharedViewModel.opponentReady.collectAsState()
     if (opponentReady) {
+        println("opponentReady is true")
         val gameId = SupabaseService.currentGame?.id
+        println("gameId: $gameId")
         LaunchedEffect(Unit) {
             navController.navigate(Screen.GameScreen.route + "/${gameId}")
         }
@@ -76,7 +78,17 @@ fun MatchMakingScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Match Making") },
+                modifier = Modifier
+                    .height(70.dp),
+                title = {
+                    Text(
+                        modifier = Modifier.padding(10.dp),
+                        text = "GAME LOBBY",
+                        fontSize = 25.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
@@ -194,7 +206,7 @@ fun InvitationListItem(game: Game, navController: NavController) {
         Text(game.player2.name)
         TextButton(onClick = {
             matchMakingViewModel.acceptInvitation(game)
-            navController.navigate("loading/${"GAME_LAODING"}")
+            navController.navigate(Screen.GameScreen.route + "/${game.id}")
         }) {
             Text("Accept")
         }
@@ -205,6 +217,3 @@ fun InvitationListItem(game: Game, navController: NavController) {
         }
     }
 }
-
-
-

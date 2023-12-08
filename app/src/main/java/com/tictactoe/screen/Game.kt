@@ -89,7 +89,7 @@ fun GameScreen(navController: NavController, gameId: String? = null) {
                 title = {
                     Text(
                         modifier = Modifier.padding(10.dp),
-                        text = "TIC-TAC-TOE",
+                        text = "GAME",
                         fontSize = 25.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White

@@ -40,6 +40,7 @@ data class Player(
     val id: String = UUID.randomUUID().toString(),
     @SerialName("name")
     var name: String
+    // var name: String = ""
 ) {
     fun updateName(newName: String) {
         name = newName

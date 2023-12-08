@@ -37,7 +37,8 @@ class SharedViewModel : ViewModel(), SupabaseCallback {
     private val _opponentMove = MutableStateFlow<Pair<Int, Int>?>(null)
     val opponentMove: StateFlow<Pair<Int, Int>?> = _opponentMove.asStateFlow()
 
-    var currentPlayer by mutableStateOf(Player(name = ""))
+    // var currentPlayer: Player = Player()
+    var currentPlayer by mutableStateOf(Player(name = "Jaslyn"))
 
     init {
         SupabaseService.callbackHandler = this

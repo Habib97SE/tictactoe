@@ -22,7 +22,6 @@ fun Navigation() {
     val navController = rememberNavController()
     val sharedViewModel: SharedViewModel = viewModel()
 
-
     Scaffold(
 
     ) { innerPadding ->
