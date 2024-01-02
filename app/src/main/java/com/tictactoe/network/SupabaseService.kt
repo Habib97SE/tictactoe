@@ -120,9 +120,9 @@ interface SupabaseCallback {
 object SupabaseService : ViewModel() {
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
     private val _type: GameType = GameType.TIC_TAC_TOE
-    private const val _supabaseUrl = "https://yrqrbupsuyfsyqlrfruw.supabase.co"
+    private const val _supabaseUrl = ""
     private const val _supabaseKey =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlycXJidXBzdXlmc3lxbHJmcnV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTczODc0NTEsImV4cCI6MjAxMjk2MzQ1MX0.LSEAvPq3gobs9eWhuxF-Ut_e8FNTvQCRumYUjoqMPlU"
+        ""
     private val _client =
         createSupabaseClient(supabaseUrl = _supabaseUrl, supabaseKey = _supabaseKey) {
             install(Realtime)
