@@ -2,6 +2,8 @@
 
 ##Android Tic-Tac-Toe Game with Kotlin and Jetpack Compose
 
+**To be able to use and test the app, you need to have a key and url in the SupabaseService.kt in network package.**
+
 Welcome to the repository for our Tic-Tac-Toe game, a modern take on the classic game designed exclusively for Android devices. This project is built using Kotlin and leverages the powerful Jetpack Compose library to provide a seamless and interactive user experience.
 
 ### Key Features:
